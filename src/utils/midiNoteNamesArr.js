@@ -127,10 +127,6 @@ const midiNoteNamesArr = [
   "F9",
   "Gb9",
   "G9",
-  "Ab9",
-  "A9",
-  "Bb9",
-  "B9",
 ];
 
 export default midiNoteNamesArr;
