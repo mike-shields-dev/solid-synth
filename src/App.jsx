@@ -4,6 +4,7 @@ import { WebMidi } from "webmidi";
 import * as Tone from "tone";
 import qwertyKeyIndexFromChar from "./utils/qwertyKeyIndexFromChar";
 import midiNotes from "./utils/midiNotes";
+import OctaveSpinbutton from "./components/OctaveSpinbutton";
 
 WebMidi.enable()
   .then(() => {
@@ -26,8 +27,8 @@ function App() {
   const [notes, setNotes] = createSignal(midiNotes);
 
   onMount(() => {
-    window.removeEventListener("keydown", onQwertyKeys);
-    window.removeEventListener("keyup", onQwertyKeys);
+    window.addEventListener("keydown", onQwertyKeys);
+    window.addEventListener("keyup", onQwertyKeys);
   });
 
   onCleanup(() => {
@@ -38,13 +39,13 @@ function App() {
   function onQwertyKeys(e) {
     if (!e.getModifierState("CapsLock")) return;
     if (["Z", "X"].includes(e.key) && e.type === "keyup") {
-      onQwertyOctave(e);
+      onQwertyOctaveChange(e);
     } else {
       onQwertyNote(e);
     }
   }
 
-  function onQwertyOctave(e) {
+  function onQwertyOctaveChange(e) {
     polySynth.releaseAll();
     setOctave((prevOctave) => {
       let newOctave;
@@ -81,24 +82,14 @@ function App() {
     );
   }
 
-  function killUIEvent(e) {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-  }
-
   return (
     <div class={styles.App}>
-      <label for="octave">Octave: </label>
-      <input
-        id="octave"
-        type="number"
-        max={octaveMax}
-        min={octaveMin}
-        onchange={onQwertyOctave}
-        onkeyup={killUIEvent}
-        onkeydown={killUIEvent}
-        onkeypress={killUIEvent}
+      <OctaveSpinbutton
+        octaveMax={octaveMax}
+        octaveMin={octaveMin}
         value={octave()}
+        setOctave={setOctave}
+        polySynth={polySynth}
       />
     </div>
   );
