@@ -2,9 +2,9 @@ import { createSignal, onCleanup, onMount } from "solid-js";
 import styles from "./App.module.css";
 import { WebMidi } from "webmidi";
 import * as Tone from "tone";
-import qwertyKeyIndexFromChar from "./utils/qwertyKeyIndexFromChar";
 import midiNotes from "./utils/midiNotes";
 import OctaveSpinbutton from "./components/OctaveSpinbutton";
+import QwertyKeyEventManager from "./components/QwertyKeyEventManager";
 
 WebMidi.enable()
   .then(() => {
@@ -22,68 +22,22 @@ const octaveSize = 12;
 const polySynth = new Tone.PolySynth(Tone.FMSynth);
 polySynth.toDestination();
 
+const [octave, setOctave] = createSignal(octaveInit);
+const [notes, setNotes] = createSignal(midiNotes);
+
 function App() {
-  const [octave, setOctave] = createSignal(octaveInit);
-  const [notes, setNotes] = createSignal(midiNotes);
-
-  onMount(() => {
-    window.addEventListener("keydown", onQwertyKeys);
-    window.addEventListener("keyup", onQwertyKeys);
-  });
-
-  onCleanup(() => {
-    window.removeEventListener("keydown", onQwertyKeys);
-    window.removeEventListener("keyup", onQwertyKeys);
-  });
-
-  function onQwertyKeys(e) {
-    if (!e.getModifierState("CapsLock")) return;
-    if (["Z", "X"].includes(e.key) && e.type === "keyup") {
-      onQwertyOctaveChange(e);
-    } else {
-      onQwertyNote(e);
-    }
-  }
-
-  function onQwertyOctaveChange(e) {
-    polySynth.releaseAll();
-    setOctave((prevOctave) => {
-      let newOctave;
-      if (e.key === "Z") newOctave = prevOctave - 1;
-      if (e.key === "X") newOctave = prevOctave + 1;
-      return newOctave < octaveMin || newOctave > octaveMax
-        ? prevOctave
-        : newOctave;
-    });
-  }
-
-  function onQwertyNote(e) {
-    const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
-    if (typeof qwertyKeyIndex !== "number") return;
-    const noteNumber = qwertyKeyIndex + octave() * octaveSize;
-    if (!notes()[noteNumber]) return;
-    let isActive;
-    if (e.type === "keydown") isActive = true;
-    if (e.type === "keyup") isActive = false;
-    updateNotes(noteNumber, isActive);
-  }
-
-  function updateNotes(noteNumber, isActive) {
-    setNotes((prevNotes) =>
-      prevNotes.map((prevNote, i) => {
-        if (noteNumber === i && isActive !== prevNote.isActive) {
-          polySynth[isActive ? "triggerAttack" : "triggerRelease"](
-            notes()[noteNumber].freq
-          );
-          return { ...prevNote, isActive };
-        }
-        return prevNote;
-      })
-    );
-  }
-
   return (
     <div class={styles.App}>
+      <QwertyKeyEventManager
+        notes={notes()}
+        octave={octave()}
+        octaveMin={octaveMin}
+        octaveMax={octaveMax}
+        octaveSize={octaveSize}
+        polySynth={polySynth}
+        setOctave={setOctave}
+        setNotes={setNotes}
+      />
       <OctaveSpinbutton
         octaveMax={octaveMax}
         octaveMin={octaveMin}
