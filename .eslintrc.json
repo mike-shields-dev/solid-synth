@@ -1,5 +1,5 @@
 {
-  "plugins": ["solid"],
+  "plugins": ["solid", "jest"],
   "extends": ["eslint:recommended", "plugin:solid/recommended"],
   "parserOptions": {
     "ecmaVersion": "latest"
