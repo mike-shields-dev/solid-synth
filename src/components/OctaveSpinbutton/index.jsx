@@ -7,7 +7,6 @@ function OctaveSpinbutton(props) {
       if (e.key === "ArrowUp") newOctave = prevOctave + 1;
       if (e.key === "ArrowDown") newOctave = prevOctave - 1;
       if (e.type === "change") newOctave = +e.target.value;
-      console.log({ newOctave, octaveMin: props.octaveMin });
       if (newOctave >= props.octaveMin && newOctave <= props.octaveMax) {
         props.polySynth.releaseAll();
         return newOctave;
