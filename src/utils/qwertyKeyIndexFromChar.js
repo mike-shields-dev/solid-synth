@@ -29,9 +29,9 @@ const chars = [
   "P",
 ];
 
-function noteIndexFromChar(char) {
+function qwertyKeyIndexFromChar(char) {
   const noteIndex = chars.indexOf(char);
   return noteIndex !== -1 && noteIndex;
 }
 
-export default noteIndexFromChar;
+export default qwertyKeyIndexFromChar;
