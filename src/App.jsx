@@ -41,9 +41,9 @@ function App() {
       <OctaveSpinbutton
         octaveMax={octaveMax}
         octaveMin={octaveMin}
-        value={octave()}
-        setOctave={setOctave}
         polySynth={polySynth}
+        setOctave={setOctave}
+        octave={octave}
       />
     </div>
   );
