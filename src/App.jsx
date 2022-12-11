@@ -4,6 +4,7 @@ import { WebMidi } from "webmidi";
 import * as Tone from "tone";
 import qwertyKeyIndexFromChar from "./utils/qwertyKeyIndexFromChar";
 import midiNotes from "./utils/midiNotes";
+import OctaveSpinbutton from "./components/OctaveSpinbutton";
 
 WebMidi.enable()
   .then(() => {
@@ -14,73 +15,57 @@ WebMidi.enable()
   })
   .catch((e) => console.log(e));
 
-const minTransposition = 0;
-const maxTransposition = 120;
-const transpositionIncrement = 12;
+const octaveInit = 4;
+const octaveMin = 0;
+const octaveMax = 10;
+const octaveSize = 12;
 const polySynth = new Tone.PolySynth(Tone.FMSynth);
 polySynth.toDestination();
 
 function App() {
-  const [transposition, setTransposition] = createSignal(0);
+  const [octave, setOctave] = createSignal(octaveInit);
   const [notes, setNotes] = createSignal(midiNotes);
 
-  function addQwertyKeyEventListeners() {
-    window.addEventListener("keydown", handleQwertyKeyEvents);
-    window.addEventListener("keyup", handleQwertyKeyEvents);
-  }
+  onMount(() => {
+    window.addEventListener("keydown", onQwertyKeys);
+    window.addEventListener("keyup", onQwertyKeys);
+  });
 
-  function removeQwertyKeyEventListeners() {
-    window.removeEventListener("keydown", handleQwertyKeyEvents);
-    window.removeEventListener("keyup", handleQwertyKeyEvents);
-  }
+  onCleanup(() => {
+    window.removeEventListener("keydown", onQwertyKeys);
+    window.removeEventListener("keyup", onQwertyKeys);
+  });
 
-  onMount(() => addQwertyKeyEventListeners());
-  onCleanup(() => removeQwertyKeyEventListeners());
-
-  function handleQwertyKeyEvents(e) {
+  function onQwertyKeys(e) {
     if (!e.getModifierState("CapsLock")) return;
-
     if (["Z", "X"].includes(e.key) && e.type === "keyup") {
-      handleQwertyTransposeEvents(e);
+      onQwertyOctaveChange(e);
     } else {
-      handleQwertyNoteEvents(e);
+      onQwertyNote(e);
     }
   }
 
-  function handleQwertyTransposeEvents(e) {
-    notes().forEach(
-      (note) => note.isActive && polySynth.triggerRelease(note.freq)
-    );
-
-    return setTransposition((prevTransposition) => {
-      let newTransposition;
-
-      if (e.key === "Z") newTransposition = prevTransposition - transpositionIncrement;
-      if (e.key === "X") newTransposition = prevTransposition + transpositionIncrement;
-      if (
-        newTransposition >= minTransposition &&
-        newTransposition <= maxTransposition
-      ) {
-        return newTransposition;
-      } else {
-        return prevTransposition;
-      }
+  function onQwertyOctaveChange(e) {
+    polySynth.releaseAll();
+    setOctave((prevOctave) => {
+      let newOctave;
+      if (e.key === "Z") newOctave = prevOctave - 1;
+      if (e.key === "X") newOctave = prevOctave + 1;
+      return newOctave < octaveMin || newOctave > octaveMax
+        ? prevOctave
+        : newOctave;
     });
   }
 
-  function handleQwertyNoteEvents(e) {
+  function onQwertyNote(e) {
     const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
     if (typeof qwertyKeyIndex !== "number") return;
-
-    const noteNumber = qwertyKeyIndex + transposition();
+    const noteNumber = qwertyKeyIndex + octave() * octaveSize;
     if (!notes()[noteNumber]) return;
-
     let isActive;
-
     if (e.type === "keydown") isActive = true;
     if (e.type === "keyup") isActive = false;
-
-    return updateNotes(noteNumber, isActive);
+    updateNotes(noteNumber, isActive);
   }
 
   function updateNotes(noteNumber, isActive) {
@@ -99,7 +84,13 @@ function App() {
 
   return (
     <div class={styles.App}>
-      <div>{transposition()}</div>
+      <OctaveSpinbutton
+        octaveMax={octaveMax}
+        octaveMin={octaveMin}
+        value={octave()}
+        setOctave={setOctave}
+        polySynth={polySynth}
+      />
     </div>
   );
 }
