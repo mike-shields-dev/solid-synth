@@ -1,5 +1,5 @@
 import "solid-testing-library";
-import noteIndexFromChar from "../utils/noteIndexFromChar";
+import qwertyKeyIndexFromChar from "../utils/qwertyKeyIndexFromChar";
 
 const validChars = [
   "A",
@@ -20,12 +20,12 @@ const validChars = [
   "P",
 ];
 
-describe("noteIndexFromChar", () => {
+describe("qwertyKeyIndexFromChar", () => {
   it(`returns a note index between 0 - 15 
         when passed a valid uppercase character, 
         on a qwerty keyboard`, () => {
     validChars.forEach((char, i) => {
-      expect(noteIndexFromChar(char)).toEqual(i);
+      expect(qwertyKeyIndexFromChar(char)).toEqual(i);
     });
   });
 });
