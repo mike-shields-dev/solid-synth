@@ -3,13 +3,11 @@ import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
 
 function QwertyKeyEventManager(props) {
   onMount(() => {
-    console.log("mounted");
     window.addEventListener("keydown", onKey);
     window.addEventListener("keyup", onKey);
   });
 
   onCleanup(() => {
-    console.log("cleanup");
     window.removeEventListener("keydown", onKey);
     window.removeEventListener("keyup", onKey);
   });

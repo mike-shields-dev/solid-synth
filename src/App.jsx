@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createSignal, For, onCleanup, onMount } from "solid-js";
 import styles from "./App.module.css";
 import * as Tone from "tone";
 import midiNotes from "./utils/midiNotes";
@@ -15,16 +15,27 @@ polySynth.toDestination();
 
 const [octave, setOctave] = createSignal(octaveInit);
 const [notes, setNotes] = createSignal(midiNotes);
+const [midiInputs, setMidiInputs] = createSignal([]);
 
 function App() {
   return (
     <div class={styles.App}>
-      <MIDIEventManager />
+      <MIDIEventManager
+        notes={notes()}
+        octave={octave()}
+        octaveMax={octaveMax}
+        octaveMin={octaveMin}
+        octaveSize={octaveSize}
+        polySynth={polySynth}
+        setMidiInputs={setMidiInputs}
+        setOctave={setOctave}
+        setNotes={setNotes}
+      />
       <QwertyKeyEventManager
         notes={notes()}
         octave={octave()}
-        octaveMin={octaveMin}
         octaveMax={octaveMax}
+        octaveMin={octaveMin}
         octaveSize={octaveSize}
         polySynth={polySynth}
         setOctave={setOctave}
@@ -37,6 +48,7 @@ function App() {
         setOctave={setOctave}
         octave={octave}
       />
+      <For each={midiInputs()}>{(midiInput) => <div>{midiInput.name}</div>}</For>
     </div>
   );
 }
