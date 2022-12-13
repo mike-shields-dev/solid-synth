@@ -1,19 +1,10 @@
 import { createSignal, onCleanup, onMount } from "solid-js";
 import styles from "./App.module.css";
-import { WebMidi } from "webmidi";
 import * as Tone from "tone";
 import midiNotes from "./utils/midiNotes";
 import OctaveSpinbutton from "./components/OctaveSpinbutton";
 import QwertyKeyEventManager from "./components/QwertyKeyEventManager";
-
-WebMidi.enable()
-  .then(() => {
-    console.log("WebMidi is enabled");
-    WebMidi.inputs.forEach((input) =>
-      console.log(input.manufacturer, input.name)
-    );
-  })
-  .catch((e) => console.log(e));
+import MIDIEventManager from "./components/MIDIEventManager";
 
 const octaveInit = 4;
 const octaveMin = 0;
@@ -28,6 +19,7 @@ const [notes, setNotes] = createSignal(midiNotes);
 function App() {
   return (
     <div class={styles.App}>
+      <MIDIEventManager />
       <QwertyKeyEventManager
         notes={notes()}
         octave={octave()}
