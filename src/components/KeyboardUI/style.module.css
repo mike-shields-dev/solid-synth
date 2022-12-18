@@ -1,0 +1,23 @@
+.Keyboard {
+  --major-key-count: 7;
+  --major-key-width: calc(100% / var(--major-key-count));
+  --minor-key-width: calc(var(--major-key-width) / 2);
+  width: 100vw;
+  height: 200px;
+  max-width: 600px;
+}
+
+.MajorKey {
+  height: 100%;
+  width: var(--major-key-width);
+  fill: #eee;
+  stroke: rgb(104, 104, 104);
+}
+
+.MinorKey {
+  fill: rgb(14, 14, 14);
+  stroke: none;
+  height: 65%;
+  width: var(--minor-key-width);
+  z-index: 1;
+}
