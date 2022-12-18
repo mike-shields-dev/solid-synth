@@ -1,7 +1,15 @@
+import { onMount } from "solid-js";
 import css from "./style.module.css";
 
 function Keyboard(props) {
-  const keyWidth = 100 / 7;
+  const keyboardWidth = 100;
+  const numMajorKeys = 7;
+  const keyWidth = keyboardWidth / numMajorKeys;
+
+  onMount(() => {
+    const keyboardEl = document.querySelector(`[class*="Keyboard"]`);
+    keyboardEl.style.setProperty("--key-width", `calc(${keyboardWidth}% / ${numMajorKeys})`);
+  })
 
   const noteEvent = (e) => {
     const noteNumber =
