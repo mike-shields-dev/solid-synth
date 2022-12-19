@@ -2,11 +2,26 @@ import { onMount } from "solid-js";
 import css from "./style.module.css";
 import synth from "../../Synth";
 
-function Keyboard(props) {
-  const keyboardWidth = 100;
-  const numMajorKeys = 7;
-  const keyWidth = keyboardWidth / numMajorKeys;
+const keyboardWidth = 100;
+const numMajorKeys = 7;
+const keyWidth = keyboardWidth / numMajorKeys;
 
+const keys = [
+  { leftOffset: 0, dataIndex: 0, className: "MajorKey" },
+  { leftOffset: 0.75, dataIndex: 1, className: "MinorKey" },
+  { leftOffset: 1, dataIndex: 2, className: "MajorKey" },
+  { leftOffset: 1.75, dataIndex: 3, className: "MinorKey" },
+  { leftOffset: 2, dataIndex: 4, className: "MajorKey" },
+  { leftOffset: 3, dataIndex: 5, className: "MajorKey" },
+  { leftOffset: 3.75, dataIndex: 6, className: "MinorKey" },
+  { leftOffset: 4, dataIndex: 7, className: "MajorKey" },
+  { leftOffset: 4.75, dataIndex: 8, className: "MinorKey" },
+  { leftOffset: 5, dataIndex: 9, className: "MajorKey" },
+  { leftOffset: 5.75, dataIndex: 10, className: "MinorKey" },
+  { leftOffset: 6, dataIndex: 11, className: "MajorKey" },
+];
+
+function Keyboard(props) {
   onMount(() => {
     const keyboardEl = document.querySelector(`[class*="Keyboard"]`);
     keyboardEl.style.setProperty(
@@ -40,102 +55,18 @@ function Keyboard(props) {
 
   return (
     <div class={css.Keyboard}>
-        <button
-          class={css.MajorKey}
-          data-index="0"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 0}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="2"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 1}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="4"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 2}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="5"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 3}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="7"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 4}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="9"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 5}%`}}
-        />
-        <button
-          class={css.MajorKey}
-          data-index="11"
-          onMouseDown={noteEvent}
-          onMouseLeave={noteEvent}
-          onMouseUp={noteEvent}
-          style={{left: `${keyWidth * 6}%`}}
-        />
-        <button        
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="1"
-          class={css.MinorKey}
-          style={{left: `${keyWidth * 0.75}%`}}
-        />
-        <button
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="3"
-          class={css.MinorKey}
-          style={{left: `${keyWidth * 1.75}%`}}
-        />
-        <button
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="6"
-          class={css.MinorKey}
-          style={{left: `${keyWidth * 3.75}%`}}
-        />
-        <button
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="8"
-          class={css.MinorKey}
-          style={{left: `${keyWidth * 4.75}%`}}
-        />
-        <button
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="10"
-          class={css.MinorKey}
-          style={{left: `${keyWidth * 5.75}%`}}
-        />
+      <For each={keys}>
+        {(key) => (
+          <button
+            class={css[key.className]}
+            data-index={key.dataIndex}
+            onMouseDown={noteEvent}
+            onMouseLeave={noteEvent}
+            onMouseUp={noteEvent}
+            style={{ left: `${keyWidth * key.leftOffset}%` }}
+          />
+        )}
+      </For>
     </div>
   );
 }
