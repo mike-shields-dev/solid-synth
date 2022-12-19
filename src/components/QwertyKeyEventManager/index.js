@@ -1,5 +1,6 @@
 import { onMount, onCleanup } from "solid-js";
 import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
+import synth from "../../Synth";
 
 function QwertyKeyEventManager(props) {
   onMount(() => {
@@ -27,11 +28,11 @@ function QwertyKeyEventManager(props) {
 
       if (e.key === "Z") newOctave = prevOctave - 1;
       if (e.key === "X") newOctave = prevOctave + 1;
-      
+
       if (newOctave < props.octaveMin || newOctave > props.octaveMax) {
         return prevOctave;
       } else {
-        props.polySynth.releaseAll();
+        synth.releaseAll();
         return newOctave;
       }
     });
@@ -51,9 +52,7 @@ function QwertyKeyEventManager(props) {
     props.setNotes((prevNotes) =>
       prevNotes.map((prevNote, i) => {
         if (noteNumber === i && isActive !== prevNote.isActive) {
-          props.polySynth[isActive ? "triggerAttack" : "triggerRelease"](
-            prevNote.freq
-          );
+          synth[isActive ? "triggerAttack" : "triggerRelease"](prevNote.freq);
           return { ...prevNote, isActive };
         } else {
           return prevNote;

@@ -1,5 +1,6 @@
 import { onMount } from "solid-js";
 import css from "./style.module.css";
+import synth from "../../Synth";
 
 function Keyboard(props) {
   const keyboardWidth = 100;
@@ -8,8 +9,11 @@ function Keyboard(props) {
 
   onMount(() => {
     const keyboardEl = document.querySelector(`[class*="Keyboard"]`);
-    keyboardEl.style.setProperty("--key-width", `calc(${keyboardWidth}% / ${numMajorKeys})`);
-  })
+    keyboardEl.style.setProperty(
+      "--key-width",
+      `calc(${keyboardWidth}% / ${numMajorKeys})`
+    );
+  });
 
   const noteEvent = (e) => {
     const noteNumber =
@@ -21,11 +25,11 @@ function Keyboard(props) {
       prevNotes.map((prevNote, i) => {
         if (noteNumber === i) {
           if (isNoteOn && !prevNote.isActive) {
-            props.polySynth.triggerAttack(prevNote.freq);
+            synth.triggerAttack(prevNote.freq);
             return { ...prevNote, isActive: true };
           }
           if (isNoteOff && prevNote.isActive) {
-            props.polySynth.triggerRelease(prevNote.freq);
+            synth.triggerRelease(prevNote.freq);
             return { ...prevNote, isActive: false };
           }
         }
@@ -38,59 +42,59 @@ function Keyboard(props) {
     <svg class={css.Keyboard}>
       <g class={css.MajorKeys}>
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="0"
           class={css.MajorKey}
+          data-index="0"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 0}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="2"
           class={css.MajorKey}
+          data-index="2"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 1}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="4"
           class={css.MajorKey}
+          data-index="4"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 2}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="5"
           class={css.MajorKey}
+          data-index="5"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 3}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="7"
           class={css.MajorKey}
+          data-index="7"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 4}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="9"
           class={css.MajorKey}
+          data-index="9"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 5}%`}
         />
         <rect
-          onMouseDown={noteEvent}
-          onMouseUp={noteEvent}
-          onMouseLeave={noteEvent}
-          data-index="11"
           class={css.MajorKey}
+          data-index="11"
+          onMouseDown={noteEvent}
+          onMouseLeave={noteEvent}
+          onMouseUp={noteEvent}
           x={`${keyWidth * 6}%`}
         />
       </g>

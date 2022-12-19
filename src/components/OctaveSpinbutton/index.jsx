@@ -1,4 +1,5 @@
 import killUIEvent from "../../utils/killUIEvent";
+import synth from "../../Synth";
 
 function OctaveSpinbutton(props) {
   function onOctave(e) {
@@ -8,7 +9,7 @@ function OctaveSpinbutton(props) {
       if (e.key === "ArrowDown") newOctave = prevOctave - 1;
       if (e.type === "change") newOctave = +e.target.value;
       if (newOctave >= props.octaveMin && newOctave <= props.octaveMax) {
-        props.polySynth.releaseAll();
+        synth.releaseAll();
         return newOctave;
       } else {
         return prevOctave;
