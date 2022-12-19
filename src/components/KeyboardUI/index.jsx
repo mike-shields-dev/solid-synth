@@ -8,17 +8,17 @@ const keyWidth = keyboardWidth / numMajorKeys;
 
 const keys = [
   { leftOffset: 0, dataIndex: 0, className: "MajorKey" },
-  { leftOffset: 0.75, dataIndex: 1, className: "MinorKey" },
   { leftOffset: 1, dataIndex: 2, className: "MajorKey" },
-  { leftOffset: 1.75, dataIndex: 3, className: "MinorKey" },
   { leftOffset: 2, dataIndex: 4, className: "MajorKey" },
   { leftOffset: 3, dataIndex: 5, className: "MajorKey" },
-  { leftOffset: 3.75, dataIndex: 6, className: "MinorKey" },
   { leftOffset: 4, dataIndex: 7, className: "MajorKey" },
-  { leftOffset: 4.75, dataIndex: 8, className: "MinorKey" },
   { leftOffset: 5, dataIndex: 9, className: "MajorKey" },
-  { leftOffset: 5.75, dataIndex: 10, className: "MinorKey" },
   { leftOffset: 6, dataIndex: 11, className: "MajorKey" },
+  { leftOffset: 0.75, dataIndex: 1, className: "MinorKey" },
+  { leftOffset: 1.75, dataIndex: 3, className: "MinorKey" },
+  { leftOffset: 3.75, dataIndex: 6, className: "MinorKey" },
+  { leftOffset: 4.75, dataIndex: 8, className: "MinorKey" },
+  { leftOffset: 5.75, dataIndex: 10, className: "MinorKey" },
 ];
 
 function Keyboard(props) {
