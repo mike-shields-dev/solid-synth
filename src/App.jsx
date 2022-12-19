@@ -5,6 +5,7 @@ import OctaveSpinbutton from "./components/OctaveSpinbutton";
 import QwertyKeyEventManager from "./components/QwertyKeyEventManager";
 import MIDIEventManager from "./components/MIDIEventManager";
 import KeyboardUI from "./components/KeyboardUI";
+import OscillatorUI from "./components/Oscillator";
 
 const octaveInit = 4;
 const octaveMin = 0;
@@ -43,6 +44,7 @@ function App() {
         setOctave={setOctave}
         octave={octave}
       />
+      <OscillatorUI />
       <KeyboardUI
         octave={octave}
         octaveSize={octaveSize}
