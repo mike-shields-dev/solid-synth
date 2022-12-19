@@ -39,108 +39,104 @@ function Keyboard(props) {
   };
 
   return (
-    <svg class={css.Keyboard}>
-      <g class={css.MajorKeys}>
-        <rect
+    <div class={css.Keyboard}>
+        <button
           class={css.MajorKey}
           data-index="0"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 0}%`}
+          style={{left: `${keyWidth * 0}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="2"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 1}%`}
+          style={{left: `${keyWidth * 1}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="4"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 2}%`}
+          style={{left: `${keyWidth * 2}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="5"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 3}%`}
+          style={{left: `${keyWidth * 3}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="7"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 4}%`}
+          style={{left: `${keyWidth * 4}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="9"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 5}%`}
+          style={{left: `${keyWidth * 5}%`}}
         />
-        <rect
+        <button
           class={css.MajorKey}
           data-index="11"
           onMouseDown={noteEvent}
           onMouseLeave={noteEvent}
           onMouseUp={noteEvent}
-          x={`${keyWidth * 6}%`}
+          style={{left: `${keyWidth * 6}%`}}
         />
-      </g>
-      <g class={css.MinorKeys}>
-        <rect
+        <button        
           onMouseDown={noteEvent}
           onMouseUp={noteEvent}
           onMouseLeave={noteEvent}
           data-index="1"
           class={css.MinorKey}
-          x={`${keyWidth * 0.75}%`}
+          style={{left: `${keyWidth * 0.75}%`}}
         />
-        <rect
+        <button
           onMouseDown={noteEvent}
           onMouseUp={noteEvent}
           onMouseLeave={noteEvent}
           data-index="3"
           class={css.MinorKey}
-          x={`${keyWidth * 1.75}%`}
+          style={{left: `${keyWidth * 1.75}%`}}
         />
-        <rect
+        <button
           onMouseDown={noteEvent}
           onMouseUp={noteEvent}
           onMouseLeave={noteEvent}
           data-index="6"
           class={css.MinorKey}
-          x={`${keyWidth * 3.75}%`}
+          style={{left: `${keyWidth * 3.75}%`}}
         />
-        <rect
+        <button
           onMouseDown={noteEvent}
           onMouseUp={noteEvent}
           onMouseLeave={noteEvent}
           data-index="8"
           class={css.MinorKey}
-          x={`${keyWidth * 4.75}%`}
+          style={{left: `${keyWidth * 4.75}%`}}
         />
-        <rect
+        <button
           onMouseDown={noteEvent}
           onMouseUp={noteEvent}
           onMouseLeave={noteEvent}
           data-index="10"
           class={css.MinorKey}
-          x={`${keyWidth * 5.75}%`}
+          style={{left: `${keyWidth * 5.75}%`}}
         />
-      </g>
-    </svg>
+    </div>
   );
 }
 
