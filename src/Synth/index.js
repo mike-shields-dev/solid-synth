@@ -10,7 +10,7 @@ class SubtractivePolySynth extends Tone.PolySynth {
   constructor() {
     super();
     this._notes = midiNotes;
-    this._noteOffset = 60;
+    this._noteOffset = 48;
   }
 
   updateNotes({ noteNumber, isActive }) {
