@@ -1,14 +1,13 @@
 import * as Tone from "tone";
-import midiNotes from "../utils/midiNotes";
+import midiNotes from "../../utils/midiNotes";
+import { masterGain } from "../MasterGain";
 
+console.log({ masterGain });
 class PolySynth {
   #validWaveforms = ["sawtooth", "sine", "triangle", "square"];
   #octaveMin = 0;
   #octaveMax = 10;
   #notesPerOctave = 12;
-  #masterGainInit = 0.1;
-  #masterGainMin = 0.00001;
-  #masterGainMax = 0.45;
 
   constructor() {
     this._noteOffset = 48;
@@ -16,31 +15,7 @@ class PolySynth {
       ...midiNote,
       source: new Tone.MonoSynth(),
     }));
-    this._masterGainValue = this.#masterGainInit;
-    this._masterGain = new Tone.Gain(this._masterGainValue);
-    this._masterGain.toDestination();
-    this._voices.forEach((voice) => voice.source.connect(this._masterGain));
-  }
-
-  set masterGain(value) {
-    this._masterGainValue = value;
-    this._masterGain.gain.rampTo(value, 0.001);
-  }
-
-  get masterGain() {
-    return this.masterGainValue;
-  }
-
-  get masterGainMin() {
-    return this.#masterGainMin;
-  }
-
-  get masterGainMax() {
-    return this.#masterGainMax;
-  }
-
-  get masterGainMin() {
-    return this.#masterGainMin;
+    this._voices.forEach((voice) => voice.source.connect(masterGain.node));
   }
 
   get notesPerOctave() {
