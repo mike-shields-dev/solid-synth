@@ -7,7 +7,7 @@ const keyboardWidth = 100;
 const numMajorKeys = 7;
 const keyWidth = keyboardWidth / numMajorKeys;
 
-const initKeys = [
+const keys = [
   { leftOffset: 0, dataIndex: 0, className: "MajorKey" },
   { leftOffset: 1, dataIndex: 2, className: "MajorKey" },
   { leftOffset: 2, dataIndex: 4, className: "MajorKey" },
@@ -23,7 +23,6 @@ const initKeys = [
 ];
 
 const Keyboard = () => {
-  const [keys, setKeys] = createSignal(initKeys);
   const [octave, setOctave] = createSignal(synth.octave);
 
   onMount(() => {
@@ -36,8 +35,9 @@ const Keyboard = () => {
 
   const onNote = (e) => {
     const noteNumber =
-      +e.target.dataset.index + + octave() * synth.notesPerOctave;
-    if (!synth.notes[noteNumber] || e.button !== 0) return;
+      +e.target.dataset.index + octave() * synth.notesPerOctave;
+    if (noteNumber < 0 || noteNumber > synth.voices.length || e.button !== 0)
+      return;
 
     let isActive;
     if (e.type === "mousedown") isActive = true;
@@ -45,14 +45,14 @@ const Keyboard = () => {
       isActive = false;
     }
 
-    synth.updateNotes({ noteNumber, isActive });
+    synth.onNoteEvent({ noteNumber, isActive });
   };
 
   return (
     <>
-      <OctaveSpinbutton octave={octave()} setOctave={setOctave}/>
+      <OctaveSpinbutton octave={octave()} setOctave={setOctave} />
       <div class={css.Keyboard}>
-        <For each={keys()}>
+        <For each={keys}>
           {(key) => {
             return (
               <button
