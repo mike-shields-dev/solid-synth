@@ -1,11 +1,9 @@
-import { createSignal, onMount, onCleanup, createEffect } from "solid-js";
+import { createSignal, onMount, onCleanup } from "solid-js";
 import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
 import synth from "../../Synth";
 
 const QwertyKeyEventManager = (props) => {
   const [octave, setOctave] = createSignal(synth.octave);
-
-  createEffect(() => console.log("@ qwerty: " + octave()));
   
   onMount(() => {
     window.addEventListener("keydown", onKey);
