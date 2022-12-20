@@ -1,6 +1,6 @@
 import { createEffect, createSignal, onMount } from "solid-js";
 import css from "./style.module.css";
-import synth from "../../Synth";
+import synth from "../../AudioAPI/Synth";
 import OctaveSpinbutton from "../OctaveSpinbutton";
 
 const keyboardWidth = 100;
