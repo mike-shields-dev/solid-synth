@@ -13,7 +13,6 @@ const [octave, setOctave] = createSignal(synth.octave);
 function App() {
   return (
     <div class={styles.App}>
-      <OctaveSpinbutton octave={octave()} setOctave={setOctave} />
       <OscillatorUI />
       <KeyboardUI />
       <MIDIEventManager />
