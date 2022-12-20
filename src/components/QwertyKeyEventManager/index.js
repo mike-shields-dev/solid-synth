@@ -37,7 +37,7 @@ const QwertyKeyEventManager = (props) => {
       newOctave > synth.octaveMax
     )
       return;
-
+    synth.releaseAll();
     setOctave(newOctave);
   };
 
@@ -46,7 +46,7 @@ const QwertyKeyEventManager = (props) => {
     const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
     if (typeof qwertyKeyIndex !== "number") return;
 
-    const noteNumber = qwertyKeyIndex + octave() * 12;
+    const noteNumber = qwertyKeyIndex + octave() * synth.notesPerOctave;
     let isActive;
     if (e.type === "keydown") isActive = true;
     if (e.type === "keyup") isActive = false;
