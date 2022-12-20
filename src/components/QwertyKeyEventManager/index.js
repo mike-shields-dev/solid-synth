@@ -1,8 +1,12 @@
-import { onMount, onCleanup } from "solid-js";
+import { createSignal, onMount, onCleanup, createEffect } from "solid-js";
 import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
 import synth from "../../Synth";
 
 const QwertyKeyEventManager = (props) => {
+  const [octave, setOctave] = createSignal(synth.octave);
+
+  createEffect(() => console.log("@ qwerty: " + octave()));
+  
   onMount(() => {
     window.addEventListener("keydown", onKey);
     window.addEventListener("keyup", onKey);
@@ -27,16 +31,14 @@ const QwertyKeyEventManager = (props) => {
     if (e.key === "Z") adjustment = -1;
     if (e.key === "X") adjustment = 1;
 
-    const newOctave = synth.octave + adjustment;
+    const newOctave = octave() + adjustment;
     if (
-      newOctave === synth.octave ||
       newOctave < synth.octaveMin ||
       newOctave > synth.octaveMax
     )
       return;
 
-    synth.octave = newOctave;
-    props.setOctave(synth.octave);
+    setOctave(newOctave);
   };
 
   const onNote = (e) => {
@@ -44,7 +46,7 @@ const QwertyKeyEventManager = (props) => {
     const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
     if (typeof qwertyKeyIndex !== "number") return;
 
-    const noteNumber = qwertyKeyIndex + synth.noteOffset;
+    const noteNumber = qwertyKeyIndex + octave() * 12;
     let isActive;
     if (e.type === "keydown") isActive = true;
     if (e.type === "keyup") isActive = false;
