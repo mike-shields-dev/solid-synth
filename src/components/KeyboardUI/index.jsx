@@ -1,7 +1,7 @@
-import { createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount } from "solid-js";
 import css from "./style.module.css";
 import synth from "../../Synth";
-import killUIEvent from "../../utils/killUIEvent";
+import OctaveSpinbutton from "../OctaveSpinbutton";
 
 const keyboardWidth = 100;
 const numMajorKeys = 7;
@@ -36,7 +36,7 @@ const Keyboard = () => {
 
   const onNote = (e) => {
     const noteNumber =
-      +e.target.dataset.index + synth.octave * synth.notesPerOctave;
+      +e.target.dataset.index + + octave() * synth.notesPerOctave;
     if (!synth.notes[noteNumber] || e.button !== 0) return;
 
     let isActive;
@@ -49,23 +49,26 @@ const Keyboard = () => {
   };
 
   return (
-    <div class={css.Keyboard}>
-      <For each={keys()}>
-        {(key) => {
-          return (
-            <button
-              class={css[key.className]}
-              data-index={key.dataIndex}
-              onMouseDown={onNote}
-              onMouseLeave={onNote}
-              onMouseUp={onNote}
-              style={{ left: `${keyWidth * key.leftOffset}%` }}
-            />
-          );
-        }}
-      </For>
-    </div>
+    <>
+      <OctaveSpinbutton octave={octave()} setOctave={setOctave}/>
+      <div class={css.Keyboard}>
+        <For each={keys()}>
+          {(key) => {
+            return (
+              <button
+                class={css[key.className]}
+                data-index={key.dataIndex}
+                onMouseDown={onNote}
+                onMouseLeave={onNote}
+                onMouseUp={onNote}
+                style={{ left: `${keyWidth * key.leftOffset}%` }}
+              />
+            );
+          }}
+        </For>
+      </div>
+    </>
   );
-}
+};
 
 export default Keyboard;
