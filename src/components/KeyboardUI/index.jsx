@@ -1,12 +1,13 @@
-import { onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import css from "./style.module.css";
 import synth from "../../Synth";
+import killUIEvent from "../../utils/killUIEvent";
 
 const keyboardWidth = 100;
 const numMajorKeys = 7;
 const keyWidth = keyboardWidth / numMajorKeys;
 
-const keys = [
+const initKeys = [
   { leftOffset: 0, dataIndex: 0, className: "MajorKey" },
   { leftOffset: 1, dataIndex: 2, className: "MajorKey" },
   { leftOffset: 2, dataIndex: 4, className: "MajorKey" },
@@ -21,7 +22,10 @@ const keys = [
   { leftOffset: 5.75, dataIndex: 10, className: "MinorKey" },
 ];
 
-function Keyboard(props) {
+const Keyboard = () => {
+  const [keys, setKeys] = createSignal(initKeys);
+  const [octave, setOctave] = createSignal(synth.octave);
+
   onMount(() => {
     const keyboardEl = document.querySelector(`[class*="Keyboard"]`);
     keyboardEl.style.setProperty(
@@ -30,42 +34,35 @@ function Keyboard(props) {
     );
   });
 
-  const noteEvent = (e) => {
+  const onNote = (e) => {
     const noteNumber =
-      +e.target.dataset.index + props.octave() * props.octaveSize;
-    const isNoteOff = ["mouseup", "mouseleave"].includes(e.type);
-    const isNoteOn = e.type === "mousedown";
+      +e.target.dataset.index + synth.octave * synth.notesPerOctave;
+    if (!synth.notes[noteNumber] || e.button !== 0) return;
 
-    props.setNotes((prevNotes) =>
-      prevNotes.map((prevNote, i) => {
-        if (noteNumber === i) {
-          if (isNoteOn && !prevNote.isActive) {
-            synth.triggerAttack(prevNote.freq);
-            return { ...prevNote, isActive: true };
-          }
-          if (isNoteOff && prevNote.isActive) {
-            synth.triggerRelease(prevNote.freq);
-            return { ...prevNote, isActive: false };
-          }
-        }
-        return prevNote;
-      })
-    );
+    let isActive;
+    if (e.type === "mousedown") isActive = true;
+    if (["mouseup", "mouseleave"].includes(e.type)) {
+      isActive = false;
+    }
+
+    synth.updateNotes({ noteNumber, isActive });
   };
 
   return (
     <div class={css.Keyboard}>
-      <For each={keys}>
-        {(key) => (
-          <button
-            class={css[key.className]}
-            data-index={key.dataIndex}
-            onMouseDown={noteEvent}
-            onMouseLeave={noteEvent}
-            onMouseUp={noteEvent}
-            style={{ left: `${keyWidth * key.leftOffset}%` }}
-          />
-        )}
+      <For each={keys()}>
+        {(key) => {
+          return (
+            <button
+              class={css[key.className]}
+              data-index={key.dataIndex}
+              onMouseDown={onNote}
+              onMouseLeave={onNote}
+              onMouseUp={onNote}
+              style={{ left: `${keyWidth * key.leftOffset}%` }}
+            />
+          );
+        }}
       </For>
     </div>
   );

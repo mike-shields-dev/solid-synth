@@ -2,7 +2,7 @@ import { onMount, onCleanup } from "solid-js";
 import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
 import synth from "../../Synth";
 
-function QwertyKeyEventManager(props) {
+const QwertyKeyEventManager = (props) => {
   onMount(() => {
     window.addEventListener("keydown", onKey);
     window.addEventListener("keyup", onKey);
@@ -13,53 +13,46 @@ function QwertyKeyEventManager(props) {
     window.removeEventListener("keyup", onKey);
   });
 
-  function onKey(e) {
+  const onKey = (e) => {
     if (!e.getModifierState("CapsLock")) return;
     if (["Z", "X"].includes(e.key) && e.type === "keyup") {
       onOctave(e);
     } else {
       onNote(e);
     }
-  }
+  };
 
-  function onOctave(e) {
-    props.setOctave((prevOctave) => {
-      let newOctave;
+  const onOctave = (e) => {
+    let adjustment;
+    if (e.key === "Z") adjustment = -1;
+    if (e.key === "X") adjustment = 1;
 
-      if (e.key === "Z") newOctave = prevOctave - 1;
-      if (e.key === "X") newOctave = prevOctave + 1;
+    const newOctave = synth.octave + adjustment;
+    if (
+      newOctave === synth.octave ||
+      newOctave < synth.octaveMin ||
+      newOctave > synth.octaveMax
+    )
+      return;
 
-      if (newOctave < props.octaveMin || newOctave > props.octaveMax) {
-        return prevOctave;
-      } else {
-        synth.releaseAll();
-        return newOctave;
-      }
-    });
-  }
+    synth.octave = newOctave;
+    props.setOctave(synth.octave);
+  };
 
-  function onNote(e) {
+  const onNote = (e) => {
+    if (e.repeat) return;
     const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
     if (typeof qwertyKeyIndex !== "number") return;
 
-    const noteNumber = qwertyKeyIndex + props.octave * props.octaveSize;
-    if (!props.notes[noteNumber]) return;
-
+    const noteNumber = qwertyKeyIndex + synth.noteOffset;
     let isActive;
     if (e.type === "keydown") isActive = true;
     if (e.type === "keyup") isActive = false;
 
-    props.setNotes((prevNotes) =>
-      prevNotes.map((prevNote, i) => {
-        if (noteNumber === i && isActive !== prevNote.isActive) {
-          synth[isActive ? "triggerAttack" : "triggerRelease"](prevNote.freq);
-          return { ...prevNote, isActive };
-        } else {
-          return prevNote;
-        }
-      })
-    );
-  }
-}
+    if (!synth.notes[noteNumber]) return;
+
+    synth.updateNotes({ noteNumber, isActive });
+  };
+};
 
 export default QwertyKeyEventManager;

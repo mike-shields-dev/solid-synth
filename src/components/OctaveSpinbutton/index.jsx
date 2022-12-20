@@ -3,18 +3,18 @@ import synth from "../../Synth";
 
 function OctaveSpinbutton(props) {
   function onOctave(e) {
-    props.setOctave((prevOctave) => {
-      let newOctave;
-      if (e.key === "ArrowUp") newOctave = prevOctave + 1;
-      if (e.key === "ArrowDown") newOctave = prevOctave - 1;
-      if (e.type === "change") newOctave = +e.target.value;
-      if (newOctave >= props.octaveMin && newOctave <= props.octaveMax) {
-        synth.releaseAll();
-        return newOctave;
-      } else {
-        return prevOctave;
-      }
-    });
+    let adjustment;
+    if (e.key === "ArrowUp") adjustment = 1;
+    if (e.key === "ArrowDown") adjustment = -1;
+    
+    let newOctave;
+    if(e.type === "change") newOctave = +e.target.value
+    else newOctave = synth.octave + adjustment;
+
+    if (newOctave < synth.octaveMin || newOctave > synth.octaveMax) return;
+
+    synth.octave = newOctave;
+    props.setOctave(synth.octave);
   }
 
   return (
@@ -23,13 +23,13 @@ function OctaveSpinbutton(props) {
       <input
         id="octave"
         name="octave"
-        max={props.octaveMax}
-        min={props.octaveMin}
+        max={synth.octaveMax}
+        min={synth.octaveMin}
         onchange={onOctave}
         onkeydown={killUIEvent}
         onkeypress={killUIEvent}
         onkeyup={onOctave}
-        value={props.octave()}
+        value={props.octave}
         type="number"
       />
     </>
