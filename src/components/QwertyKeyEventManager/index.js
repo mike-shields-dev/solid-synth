@@ -2,9 +2,9 @@ import { createSignal, onMount, onCleanup } from "solid-js";
 import qwertyKeyIndexFromChar from "../../utils/qwertyKeyIndexFromChar";
 import synth from "../../Synth";
 
-const QwertyKeyEventManager = (props) => {
+const QwertyKeyEventManager = () => {
   const [octave, setOctave] = createSignal(synth.octave);
-  
+
   onMount(() => {
     window.addEventListener("keydown", onKey);
     window.addEventListener("keyup", onKey);
@@ -30,12 +30,9 @@ const QwertyKeyEventManager = (props) => {
     if (e.key === "X") adjustment = 1;
 
     const newOctave = octave() + adjustment;
-    if (
-      newOctave < synth.octaveMin ||
-      newOctave > synth.octaveMax
-    )
-      return;
-    synth.releaseAll();
+    if (newOctave < synth.octaveMin || newOctave > synth.octaveMax) return;
+
+    synth.releaseActiveNotes();
     setOctave(newOctave);
   };
 
@@ -44,14 +41,14 @@ const QwertyKeyEventManager = (props) => {
     const qwertyKeyIndex = qwertyKeyIndexFromChar(e.key);
     if (typeof qwertyKeyIndex !== "number") return;
 
-    const noteNumber = qwertyKeyIndex + octave() * synth.notesPerOctave;
+    const noteNumber = qwertyKeyIndex + octave() * 12;
+    if (noteNumber < 0 || noteNumber > synth.voices.length) return;
+
     let isActive;
     if (e.type === "keydown") isActive = true;
     if (e.type === "keyup") isActive = false;
 
-    if (!synth.notes[noteNumber]) return;
-
-    synth.updateNotes({ noteNumber, isActive });
+    synth.onNoteEvent({ noteNumber, isActive });
   };
 };
 
