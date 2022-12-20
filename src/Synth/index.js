@@ -1,67 +1,58 @@
 import * as Tone from "tone";
 import midiNotes from "../utils/midiNotes";
 
-class SubtractivePolySynth extends Tone.PolySynth {
-  #validWaveforms = ["sine", "triangle", "sawtooth", "pulse"];
+class PolySynth {
+  #validWaveforms = ["sawtooth", "sine", "triangle", "square"];
   #octaveMin = 0;
   #octaveMax = 10;
   #notesPerOctave = 12;
+  #masterGainInit = 0.1;
+  #masterGainMin = 0.00001;
+  #masterGainMax = 0.45;
 
   constructor() {
-    super();
-    this._notes = midiNotes;
     this._noteOffset = 48;
+    this._voices = midiNotes.map((midiNote) => ({
+      ...midiNote,
+      source: new Tone.MonoSynth(),
+    }));
+    this._masterGainValue = this.#masterGainInit;
+    this._masterGain = new Tone.Gain(this._masterGainValue);
+    this._masterGain.toDestination();
+    this._voices.forEach((voice) => voice.source.connect(this._masterGain));
   }
 
-  updateNotes({ noteNumber, isActive }) {
-    if (
-      typeof noteNumber !== "number" ||
-      noteNumber < 0 ||
-      noteNumber > this.notes.length - 1
-    )
-      throw Error(
-        `Invalid noteNumber: ${noteNumber},
-        Valid noteNumbers: 0 - ${this.notes.length - 1}`
-      );
-
-    this._notes = this._notes.map((note, i) => {
-      if (noteNumber === i && isActive !== note.isActive) {
-        if (isActive) this.triggerAttack(note.freq);
-        if (!isActive) this.triggerRelease(note.freq);
-        return { ...note, isActive };
-      }
-      return note;
-    });
+  set masterGain(value) {
+    this._masterGainValue = value;
+    this._masterGain.gain.rampTo(value, 0.001);
   }
 
-  get notes() {
-    return this._notes;
+  get masterGain() {
+    return this.masterGainValue;
   }
 
-  get validWaveforms() {
-    return this.#validWaveforms;
+  get masterGainMin() {
+    return this.#masterGainMin;
   }
 
-  set waveform(waveform) {
-    if (!this.#validWaveforms.includes(waveform))
-      throw Error(
-        `Invalid waveform: ${waveform}, 
-        Valid waveforms: ${this.#validWaveforms}`
-      );
-
-    this.set({
-      oscillator: {
-        type: waveform,
-      },
-    });
+  get masterGainMax() {
+    return this.#masterGainMax;
   }
 
-  get waveform() {
-    return this.options.oscillator.type;
+  get masterGainMin() {
+    return this.#masterGainMin;
   }
 
   get notesPerOctave() {
     return this.#notesPerOctave;
+  }
+
+  get noteOffset() {
+    return this._noteOffset;
+  }
+
+  get octave() {
+    return this.noteOffset / this.#notesPerOctave;
   }
 
   get octaveMin() {
@@ -72,35 +63,57 @@ class SubtractivePolySynth extends Tone.PolySynth {
     return this.#octaveMax;
   }
 
-  get noteOffset() {
-    return this._noteOffset;
+  get voices() {
+    return this._voices;
   }
 
-  set noteOffset(newOffset) {
-    this._noteOffset = newOffset;
+  get validWaveforms() {
+    return this.#validWaveforms;
   }
 
-  get octave() {
-    return this.noteOffset / this.#notesPerOctave;
+  get waveform() {
+    return this.voices[0].source.oscillator.type;
   }
 
-  set octave(octave) {
-    if (
-      typeof octave !== "number" ||
-      octave < this.#octaveMin ||
-      octave > this.#octaveMax
-    )
+  set waveform(type) {
+    if (!this.#validWaveforms.includes(type))
       throw Error(
-        `Invalid octave: ${octave}, 
-        Valid octave range: ${this.#octaveMin} - ${this.#octaveMax}`
+        `Invalid waveform: ${type}, 
+      Valid waveforms: ${this.#validWaveforms}`
       );
 
-    this.releaseAll();
-    this.noteOffset = octave * this.#notesPerOctave;
+    this._voices.forEach((voice) => {
+      voice.source.set({ oscillator: { type: type } });
+    });
+  }
+
+  onNoteEvent({ noteNumber, isActive }) {
+    const voice = this._voices[noteNumber];
+    if (isActive) {
+      voice.source.triggerAttack(voice.freq);
+      voice.isActive = true;
+    }
+    if (!isActive) {
+      voice.source.triggerRelease();
+      voice.isActive = false;
+    }
+  }
+
+  releaseActiveNotes() {
+    this._voices
+      .filter((voice) => voice.isActive)
+      .forEach((voice) => voice.source.triggerRelease());
+  }
+
+  get polyphonicFilterFrequency() {
+    return this.voices[0].source;
+  }
+
+  set polyphonicFilterFrequency(frequency) {
+    this.voices.forEach((voice) => voice.source.filter.set({ frequency }));
   }
 }
 
-const synth = new SubtractivePolySynth(Tone.MonoSynth);
-synth.toDestination();
+const synth = new PolySynth();
 
 export default synth;
