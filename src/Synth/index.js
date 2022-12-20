@@ -100,9 +100,9 @@ class PolySynth {
   }
 
   releaseActiveNotes() {
-    this._voices
-      .filter((voice) => voice.isActive)
-      .forEach((voice) => voice.source.triggerRelease());
+    this._voices.forEach(
+      (voice) => voice.isActive && voice.source.triggerRelease()
+    );
   }
 
   get polyphonicFilterFrequency() {
