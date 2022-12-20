@@ -13,7 +13,7 @@ function MIDIEventManager() {
     if (e.type === "noteon") isActive = true;
     if (e.type === "noteoff") isActive = false;
 
-    synth.updateNotes({ noteNumber, isActive });
+    synth.onNoteEvent({ noteNumber, isActive });
   };
 
   const addListener = (midiInput, eventType) =>
