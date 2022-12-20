@@ -8,7 +8,6 @@ function MIDIEventManager() {
 
   const onNoteEvent = (e) => {
     const [statusByte, noteNumber, noteVelocity] = e.data;
-    console.table({ statusByte, noteNumber, noteVelocity });
 
     let isActive;
     if (e.type === "noteon") isActive = true;
