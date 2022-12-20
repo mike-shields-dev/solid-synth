@@ -1,12 +1,12 @@
 import { createSignal } from "solid-js";
-import synth from "../../Synth";
+import { masterGain } from "../../AudioAPI/MasterGain";
 
 function MasterGain() {
-  const [gain, setGain] = createSignal(synth.masterGain);
-  
+  const [gain, setGain] = createSignal(masterGain.gain);
+
   const onGain = (e) => {
-    synth.masterGain = +e.target.value;
-    setGain(synth.masterGain);
+    masterGain.gain = +e.target.value;
+    setGain(masterGain);
   };
 
   return (
@@ -18,8 +18,8 @@ function MasterGain() {
         name="master-gain"
         value={gain()}
         oninput={onGain}
-        min={synth.masterGainMin}
-        max={synth.masterGainMax}
+        min={masterGain.gain.min}
+        max={masterGain.gain.max}
         step={0.01}
       />
     </div>
