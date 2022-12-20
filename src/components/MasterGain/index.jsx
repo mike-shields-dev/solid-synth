@@ -3,8 +3,7 @@ import synth from "../../Synth";
 
 function MasterGain() {
   const [gain, setGain] = createSignal(synth.masterGain);
-
-  console.log(gain());
+  
   const onGain = (e) => {
     synth.masterGain = +e.target.value;
     setGain(synth.masterGain);
