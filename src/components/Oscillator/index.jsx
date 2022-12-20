@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import synth from "../../Synth/index";
+import synth from "../../Synth";
 
 function OscillatorUI() {
   const [selectedWaveform, setSelectedWaveform] = createSignal(synth.waveform);
